@@ -21,12 +21,12 @@ class MenuItem(MPTTModel):
                             related_name='children')
     link = models.CharField(_('link'), max_length=255, blank=True, null=True)
     order = models.IntegerField(_('order'))
-    enabled = models.BooleanField(_('enabled'))
+    enabled = models.BooleanField(_('enabled'), default=True)
     login_required = models.BooleanField(
         _('login required'),
         default=False,
         help_text=_(
-            'If this is checked, only logged-in users will be able to view the page.'
+            'If this is checked, only logged-in users will be able to view the item.'
         )  # noqa
     )
     permissions = models.ManyToManyField(

@@ -34,15 +34,15 @@ class MenuItemAdmin(MPTTModelAdmin):
     prepopulated_fields = {'slug': ('label',)}
     fieldsets = (
         (_('Main'), {
-            'fields': ('parent', 'label', 'slug', 'order', 'enabled', ),
+            'fields': ('parent', 'label', 'slug', 'order', ),
             'classes': ('baton-tabs-init', 'baton-tab-fs-permissions', 'baton-tab-inline-children', ),
             'description': _('A menu item without parent identifies a new menu.')
 
         }),
-        (_('Permissions'), {
-            'fields': ('login_required', 'permissions', ),
+        (_('Visibility'), {
+            'fields': ('enabled', 'login_required', 'permissions', ),
             'classes': ('tab-fs-permissions', ),
-            'description': _('Yuo can decide to restrict the visibility of this voice and consequently of all its children.')
+            'description': _('Yuo can decide to disable or restrict the visibility of this voice and consequently of all its children. Keep in mind that also if a child is publicly visible, but this voice requires a login, then the child will not be visible to not logged users. The same happens for permissions restrictions.')
         }),
     )
 
