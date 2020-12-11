@@ -1,9 +1,13 @@
 # Config file for automatic testing at travis-ci.org
 
+dist: focal
 language: python
 
 python:
+  - "3.5"
   - "3.6"
+  - "3.7"
+  - "3.8"
 
 env: 
   - TOX_ENV=py37-django-21
