@@ -1,8 +1,18 @@
 # -*- coding: utf-8 -*-
+import json
+import logging
+
 from django.contrib.auth.models import Permission
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.db import transaction
+
 from mptt.models import MPTTModel, TreeForeignKey
+
+from .managers import MenuItemManager
+from .exceptions import InvalidJson, UnsupportedJsonData, MissingJsonRequiredProp
+
+logger = logging.getLogger(__name__)
 
 
 class MenuItem(MPTTModel):
@@ -38,6 +48,8 @@ class MenuItem(MPTTModel):
         )  # noqa
     )
 
+    objects = MenuItemManager()
+
     def __str__(self):
         return '{}'.format(self.label)
 
@@ -47,3 +59,41 @@ class MenuItem(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by = ('order', )
+
+    @classmethod
+    def from_json(cls, json_string):
+        try:
+            d = json.loads(json_string)
+        except Exception as e:
+            raise InvalidJson('Cannot parse provided json: %s' + str(e))
+
+        if not isinstance(d, dict):
+            raise UnsupportedJsonData('Provided json should be a dictionary containing a single root voice')
+
+        with transaction.atomic():
+            res = cls.create_item_from_dict(d)
+
+        return res
+
+    @classmethod
+    def create_item_from_dict(cls, d, parent=None):
+        if 'label' not in d or 'slug' not in d or 'order' not in d:
+            raise MissingJsonRequiredProp('label, slug and order properties are mandatory')
+
+        item = MenuItem.objects.create(
+            parent=parent,
+            label=d.get('label'),
+            slug=d.get('slug'),
+            order=d.get('order'),
+            link=d.get('link', None),
+            enabled=d.get('enabled', True),
+            login_required=d.get('login_required', False),
+        )
+
+        for permission_code in d.get('permissions', []):
+            item.permissions.add(Permission.objects.get(codename=permission_code))
+
+        for child in d.get('children', []):
+            cls.create_item_from_dict(child, item)
+
+        return item

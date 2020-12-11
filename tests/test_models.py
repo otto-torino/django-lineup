@@ -36,6 +36,5 @@ class TreeOrder(TransactionTestCase):
                 link='/',
             )
             child[i].save()
-        order = models.MenuItem.objects.exclude(
-            slug='primary-nav').values_list('order', flat=True)
+        order = [c.order for c in primary_nav.children.all()]
         self.assertEqual(list(order), sorted(order))
