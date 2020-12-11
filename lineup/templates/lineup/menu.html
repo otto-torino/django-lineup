@@ -4,7 +4,7 @@
     <ul>
         {% for item in items %}
             <li>
-                <a{% if item.link %} href="{{ item.link }}"{% endif %}>{{ item }}</a>
+                <a class="{% if item.active %}active{% elif item.with_active %}with-active{% endif %}"{% if item.link %} href="{{ item.link }}"{% endif %}>{{ item }}</a>
                 {% lineup_menu item.slug %}
             </li>
         {% endfor %}

@@ -12,6 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 def get_all_user_permissions_id_list(user):
+    '''
+    Returns a flat list of all user permissions ids
+    '''
     # individual permissions
     perms = list(
         Permission.objects.filter(user=user).values_list('id', flat=True)
@@ -21,6 +24,20 @@ def get_all_user_permissions_id_list(user):
         Permission.objects.filter(group__user=user).values_list('id', flat=True)
     )
     return perms + group_perms
+
+
+def set_active_voice(path, items):
+    '''
+    Sets the active property to the active voice, and with_active to
+    all its parents
+    '''
+    for item in items:
+        if item.is_active(path):
+            item.set_active()
+            parent = item.parent
+            while parent is not None:
+                parent.set_with_active()
+                parent = parent.parent
 
 
 @register.inclusion_tag('lineup/menu.html', takes_context=True)
@@ -65,6 +82,11 @@ def lineup_menu(context, slug, css=None):
         items = root.children.enabled(
             Q(permissions__id__in=permissions) | Q(permissions=None)
         ).distinct()
+
+    # search active voice
+    if 'request' in context:
+        path = context['request'].META['PATH_INFO']
+        set_active_voice(path, items)
 
     context['items'] = items
     context['css'] = css

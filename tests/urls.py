@@ -9,5 +9,5 @@ from baton.autodiscover import admin
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('baton/', include('baton.urls')),
-    re_path(r'^$', TemplateView.as_view(template_name='home.html'), name='home'),
+    re_path(r'', TemplateView.as_view(template_name='home.html'), name='home'),
 ]

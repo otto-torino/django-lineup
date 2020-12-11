@@ -10,9 +10,10 @@ python:
   - "3.8"
 
 env: 
-  - TOX_ENV=py37-django-21
-  - TOX_ENV=py36-django-21
-  - TOX_ENV=py35-django-21
+  - TOX_ENV=django-21
+  - TOX_ENV=django-22
+  - TOX_ENV=django-30
+  - TOX_ENV=django-31
 
 matrix:
   fast_finish: true

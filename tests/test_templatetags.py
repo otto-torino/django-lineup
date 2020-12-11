@@ -9,7 +9,7 @@ Tests for `django-lineup` templatetags module.
 
 import json
 from django.test import TestCase
-from lineup.templatetags.lineup_tags import get_all_user_permissions_id_list
+from lineup.templatetags.lineup_tags import get_all_user_permissions_id_list, set_active_voice
 from django.contrib.auth.models import User, Group, Permission, AnonymousUser
 from django.template import Context, Template
 
@@ -68,6 +68,7 @@ class LineupTagsTest(TestCase):
                                 {
                                     'label': 'DMARC DNS Tools',
                                     'slug': 'dmarc-dns-tools',
+                                    'link': '/dmarc-tools/',
                                     'order': 0,
                                 }
                             ]
@@ -162,7 +163,7 @@ class LineupTagsTest(TestCase):
         ).render(Context({
             'user': AnonymousUser()
         }))
-        expected = '\n<ul><li><a>Tools</a><ul><li><a>Password Generator</a></li></ul></li></ul>\n'
+        expected = '\n<ul><li><a class="">Tools</a><ul><li><a class="">Password Generator</a></li></ul></li></ul>\n'
         self.assertEqual(out, expected)
 
     def test_lineup_menu_tag_superuser(self):
@@ -173,7 +174,7 @@ class LineupTagsTest(TestCase):
         ).render(Context({
             'user': self.superuser
         }))
-        expected = '\n<ul><li><a>Tools</a><ul><li><a>DNS Tools</a><ul><li><a>DMARC DNS Tools</a></li></ul></li><li><a>Password Generator</a></li></ul></li><li><a>Perm Item</a></li></ul>\n'
+        expected = '\n<ul><li><a class="">Tools</a><ul><li><a class="">DNS Tools</a><ul><li><a class="" href="/dmarc-tools/">DMARC DNS Tools</a></li></ul></li><li><a class="">Password Generator</a></li></ul></li><li><a class="">Perm Item</a></li></ul>\n'
         self.assertEqual(out, expected)
 
     def test_lineup_menu_tag_logged_in_wrong_perms_user(self):
@@ -184,7 +185,7 @@ class LineupTagsTest(TestCase):
             'user': self.wrong_perm_user
         }))
 
-        expected = '\n<ul><li><a>Tools</a><ul><li><a>DNS Tools</a><ul><li><a>DMARC DNS Tools</a></li></ul></li><li><a>Password Generator</a></li></ul></li></ul>\n'
+        expected = '\n<ul><li><a class="">Tools</a><ul><li><a class="">DNS Tools</a><ul><li><a class="" href="/dmarc-tools/">DMARC DNS Tools</a></li></ul></li><li><a class="">Password Generator</a></li></ul></li></ul>\n'
         self.assertEqual(out, expected)
 
     def test_lineup_menu_tag_logged_in_user(self):
@@ -195,5 +196,15 @@ class LineupTagsTest(TestCase):
             'user': self.user
         }))
 
-        expected = '\n<ul><li><a>Tools</a><ul><li><a>DNS Tools</a><ul><li><a>DMARC DNS Tools</a></li></ul></li><li><a>Password Generator</a></li></ul></li><li><a>Perm Item</a></li></ul>\n'
+        expected = '\n<ul><li><a class="">Tools</a><ul><li><a class="">DNS Tools</a><ul><li><a class="" href="/dmarc-tools/">DMARC DNS Tools</a></li></ul></li><li><a class="">Password Generator</a></li></ul></li><li><a class="">Perm Item</a></li></ul>\n'
         self.assertEqual(out, expected)
+
+    def test_set_active_item(self):
+        path = '/dmarc-tools/'
+        els = list(self.tree.children.all()[0].children.all()[0].children.all())
+        p = MenuItem.objects.get(id=els[0].parent.id)
+        self.assertEqual(els[0].active, False)
+        self.assertEqual(els[0].parent.with_active, False)
+        set_active_voice(path, els)
+        self.assertEqual(els[0].active, True)
+        self.assertEqual(els[0].parent.with_active, True)

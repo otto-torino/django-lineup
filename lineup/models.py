@@ -50,6 +50,9 @@ class MenuItem(MPTTModel):
 
     objects = MenuItemManager()
 
+    active = False
+    with_active = False
+
     def __str__(self):
         return '{}'.format(self.label)
 
@@ -97,3 +100,12 @@ class MenuItem(MPTTModel):
             cls.create_item_from_dict(child, item)
 
         return item
+
+    def is_active(self, path):
+        return self.link and self.link == path
+
+    def set_active(self):
+        self.active = True
+
+    def set_with_active(self):
+        self.with_active = True
