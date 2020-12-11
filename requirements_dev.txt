@@ -1,0 +1,6 @@
+invoke
+twine
+wheel
+zest.releaser
+django-mptt>=0.11.0
+django-baton
