@@ -1,11 +1,19 @@
 {% load lineup_tags %}
 {% spaceless %}
-{% if items.count %}
-    <ul>
+{% comment %}
+    item is a dictionary:
+    - instance: MenuItem instance
+    - parent: the parent item
+    - children: list of child items
+    - active: whether the item is active or not
+    - has_active: whether the item contains an active item or not
+{% endcomment %}
+{% if items|length %}
+    <ul id="lineup-{{ slug }}" class="level-{{ level }}">
         {% for item in items %}
-            <li>
-                <a class="{% if item.active %}active{% elif item.with_active %}with-active{% endif %}"{% if item.link %} href="{{ item.link }}"{% endif %}>{{ item }}</a>
-                {% lineup_menu item.slug %}
+            <li class="{% if item.active %}active {% elif item.has_active %}has-active {% endif %}{% if item.children|length %}has-children {% endif %}">
+                <a{% if item.instance.link %} href="{{ item.instance.link }}"{% endif %}{% if item.instance.title %} title="{{ item.instance.title }}"{% endif %}>{{ item.instance.label }}</a>
+                {% lineup_menu item %}
             </li>
         {% endfor %}
     </ul>

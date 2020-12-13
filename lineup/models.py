@@ -30,6 +30,7 @@ class MenuItem(MPTTModel):
                             blank=True,
                             related_name='children')
     link = models.CharField(_('link'), max_length=255, blank=True, null=True)
+    title = models.CharField(_('title'), max_length=255, blank=True, null=True)
     order = models.IntegerField(_('order'))
     enabled = models.BooleanField(_('enabled'), default=True)
     login_required = models.BooleanField(
@@ -68,7 +69,7 @@ class MenuItem(MPTTModel):
         try:
             d = json.loads(json_string)
         except Exception as e:
-            raise InvalidJson('Cannot parse provided json: %s' + str(e))
+            raise InvalidJson('Cannot parse provided json: %s' % str(e))
 
         if not isinstance(d, dict):
             raise UnsupportedJsonData('Provided json should be a dictionary containing a single root voice')
@@ -89,6 +90,7 @@ class MenuItem(MPTTModel):
             slug=d.get('slug'),
             order=d.get('order'),
             link=d.get('link', None),
+            title=d.get('title', None),
             enabled=d.get('enabled', True),
             login_required=d.get('login_required', False),
         )
@@ -103,9 +105,3 @@ class MenuItem(MPTTModel):
 
     def is_active(self, path):
         return self.link and self.link == path
-
-    def set_active(self):
-        self.active = True
-
-    def set_with_active(self):
-        self.with_active = True

@@ -32,38 +32,25 @@ def set_active_voice(path, items):
     all its parents
     '''
     for item in items:
-        if item.is_active(path):
-            item.set_active()
-            parent = item.parent
+        if item.get('instance').is_active(path):
+            item['active'] = True
+            parent = item.get('parent')
             while parent is not None:
-                parent.set_with_active()
-                parent = parent.parent
+                parent['has_active'] = True
+                parent = parent.get('parent')
 
 
-@register.inclusion_tag('lineup/menu.html', takes_context=True)
-def lineup_menu(context, slug, css=None):
-    '''
-    Renders one tree level given the slug of the parent node.
-    When called recursively can render the whole tree.
-    '''
-    EMPTY = {'items': None}
-
-    try:
-        root = MenuItem.objects.get(slug=slug)
-    except MenuItem.DoesNotExist:
-        logger.error('Provided lineup menu slug %s not found' % slug)
-        return EMPTY
-
+def create_tree(context, root, parent=None):
     # get current user
     user = context.get('user')
 
     # if root is not enabled, do not show children
     if not root.enabled:
-        return EMPTY
+        return
 
     # if root visibility restrictions and user is not authenticated do not show children
     if not user.is_authenticated and (root.login_required or root.permissions.count()):  # noqa
-        return EMPTY
+        return
 
     if not user.is_authenticated:
         # unlogged user sees only public items
@@ -73,22 +60,57 @@ def lineup_menu(context, slug, css=None):
         items = root.children.enabled()
     else:
         # logged in user which is not superuse should check for permissions
-        permissions = context.get('permissions', None)
+        permissions = context.get('lineup_permissions', None)
         if permissions is None:
             permissions = get_all_user_permissions_id_list(user)
             # put in context to avoid querying again at every iteration
-            context['permissions'] = permissions
+            context['lineup_permissions'] = permissions
 
         items = root.children.enabled(
             Q(permissions__id__in=permissions) | Q(permissions=None)
         ).distinct()
 
+    # parent needed to traverse upward for has-active functionality
+    el = {'instance': root, 'parent': parent}
+    el['children'] = [create_tree(context, child, el) for child in items]
+
     # search active voice
     if 'request' in context:
         path = context['request'].META['PATH_INFO']
-        set_active_voice(path, items)
+        set_active_voice(path, el['children'])
+
+    return el
+
+
+@register.inclusion_tag('lineup/menu.html', takes_context=True)
+def lineup_menu(context, item):
+    '''
+    Renders the whole tree if called recursively with different item param.
+    - If item is a slug, the whole tree dictionary is created. and the first
+    level items rendered.
+    - If item is a dict, it just continues traversing rendering its children.
+    '''
+    if isinstance(item, str):
+        try:
+            root = MenuItem.objects.get(slug=item)
+            tree = create_tree(context, root)
+            items = tree.get('children', [])
+            slug = item
+            level = root.level
+        except MenuItem.DoesNotExist:
+            logger.error('Provided lineup menu slug %s not found' % item)
+            return context
+    elif isinstance(item, dict):
+        items = item.get('children')
+        slug = item.get('instance').slug
+        level = item.get('instance').level
+    else:
+        items = []
+        slug = None
+        level = None
 
     context['items'] = items
-    context['css'] = css
+    context['slug'] = slug
+    context['level'] = level
 
     return context

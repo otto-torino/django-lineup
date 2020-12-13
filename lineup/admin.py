@@ -34,7 +34,7 @@ class MenuItemAdmin(MPTTModelAdmin):
     prepopulated_fields = {'slug': ('label',)}
     fieldsets = (
         (_('Main'), {
-            'fields': ('parent', 'label', 'slug', 'link', 'order', ),
+            'fields': ('parent', 'label', 'slug', 'link', 'title', 'order', ),
             'classes': ('baton-tabs-init', 'baton-tab-fs-permissions', 'baton-tab-inline-children', ),
             'description': _('A menu item without parent identifies a new menu.')
 
