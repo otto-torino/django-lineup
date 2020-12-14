@@ -35,23 +35,27 @@ Add it to your `INSTALLED_APPS`:
         ...
     )
 
-Add Django Lineup's URL patterns:
+Be sure the ``requests`` context processor is included (it is by default):
 
 .. code-block:: python
 
-    from lineup import urls as lineup_urls
-
-
-    urlpatterns = [
-        ...
-        url(r'^', include(lineup_urls)),
-        ...
+    TEMPLATES = [
+      {
+        'OPTIONS': {
+          'context_processors': [
+            "django.template.context_processors.request",
+          ],
+        },
+      },
     ]
 
 Features
 --------
 
-* TODO
+- Multiple menus supported
+- Render menu tree templatetags
+- Breadcrumbs templetetag
+- Import a menu from json management command
 
 Running Tests
 -------------
@@ -61,8 +65,8 @@ Does the code actually work?
 ::
 
     source <YOURVIRTUALENV>/bin/activate
-    (myenv) $ pip install tox
-    (myenv) $ tox
+    (myenv) $ pip install -r requirements_test.txt
+    (myenv) $ python runtests.py
 
 
 Development commands
@@ -99,10 +103,12 @@ To run this example, follow these instructions:
 		python manage.py runserver
 
 5. Access from the browser at `http://127.0.0.1:8000`
+6. Admin user account is admin:admin
 
 
 Credits
 -------
+Django Lineup is developed by Otto SRL.
 
 Tools used in rendering this package:
 
