@@ -8,8 +8,8 @@ Django Lineup
 .. image:: https://travis-ci.org/otto-torino/django-lineup.svg?branch=master
     :target: https://travis-ci.com/github/otto-torino/django-lineup
 
-.. image:: https://codecov.io/gh/abidibo/django-lineup/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/abidibo/django-lineup
+.. image:: https://codecov.io/gh/otto-torino/django-lineup/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/otto-torino/django-lineup
 
 Multiple navigation system for django sites.
 
@@ -37,7 +37,7 @@ Add it to your `INSTALLED_APPS`:
         ...
     )
 
-Be sure the ``requests`` context processor is included (it is by default):
+Make sure the ``requests`` context processor is included (it is by default):
 
 .. code-block:: python
 
