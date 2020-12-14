@@ -46,11 +46,11 @@ def create_tree(context, root, parent=None):
 
     # if root is not enabled, do not show children
     if not root.enabled:
-        return
+        return {}
 
     # if root visibility restrictions and user is not authenticated do not show children
     if not user.is_authenticated and (root.login_required or root.permissions.count()):  # noqa
-        return
+        return {}
 
     if not user.is_authenticated:
         # unlogged user sees only public items

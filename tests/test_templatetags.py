@@ -15,6 +15,7 @@ from django.template import Context, Template
 
 from lineup.models import MenuItem
 from lineup import exceptions
+from lineup.templatetags.lineup_tags import lineup_menu, lineup_breadcrumbs
 
 
 class LineupTagsTest(TestCase):
@@ -153,12 +154,69 @@ class LineupTagsTest(TestCase):
         self.assertEqual(children[2].permissions.all()[0].id, 5)
         self.assertEqual(children[2].permissions.all()[1].id, 24)
 
+    def test_linup_menu_wrong_item_type(self):
+        context = {}
+        res = lineup_menu(context, [])
+        self.assertEqual(res['items'], [])
+        self.assertEqual(res['slug'], None)
+        self.assertEqual(res['level'], None)
+
     def test_lineup_menu_tag_unexisting_menu(self):
         out = Template(
             "{% load lineup_tags %}"
             "{% lineup_menu 'main-menu_' %}"
         ).render(Context({
             'user': self.user
+        }))
+        self.assertEqual(out, '\n\n')
+
+    def test_lineup_disabled_menu(self):
+        menu = {
+            'label': 'Menu',
+            'slug': 'menu',
+            'order': 0,
+            'enabled': False,
+            'children': [
+                {
+                    'label': 'A',
+                    'slug': 'a',
+                    'order': 0,
+                },
+            ]
+        }
+
+        MenuItem.from_json(json.dumps(menu))
+
+        out = Template(
+            "{% load lineup_tags %}"
+            "{% lineup_menu 'menu' %}"
+        ).render(Context({
+            'user': self.user
+        }))
+        self.assertEqual(out, '\n\n')
+
+    def test_lineup_menu_login_required(self):
+        menu = {
+            'label': 'Menu',
+            'slug': 'menu',
+            'order': 0,
+            'login_required': True,
+            'children': [
+                {
+                    'label': 'A',
+                    'slug': 'a',
+                    'order': 0,
+                },
+            ]
+        }
+
+        MenuItem.from_json(json.dumps(menu))
+
+        out = Template(
+            "{% load lineup_tags %}"
+            "{% lineup_menu 'menu' %}"
+        ).render(Context({
+            'user': AnonymousUser()
         }))
         self.assertEqual(out, '\n\n')
 
@@ -222,3 +280,50 @@ class LineupTagsTest(TestCase):
 
         expected = '<div class="lineup-breadcrumbs"><a>Tools</a> › <a>DNS Tools</a> › <a href="/dmarc-tools/" title="DMARC Rulez">DMARC DNS Tools</a></div>\n'
         self.assertEqual(out, expected)
+
+    def test_breadcrumbs_no_active(self):
+        request = self.factory.get('/wrong-dmarc-tools/')
+        out = Template(
+            "{% load lineup_tags %}"
+            "{% lineup_breadcrumbs 'main-menu' %}"
+        ).render(Context({
+            'user': self.wrong_perm_user,
+            'request': request,
+        }))
+
+        expected = '\n'
+        self.assertEqual(out, expected)
+
+    def test_breadcrumbs_active_in_other_menu(self):
+        request = self.factory.get('/a/')
+        menu = {
+            'label': 'Menu',
+            'slug': 'menu',
+            'order': 0,
+            'login_required': True,
+            'children': [
+                {
+                    'label': 'A',
+                    'slug': 'a',
+                    'link': '/a/',
+                    'order': 0,
+                },
+            ]
+        }
+
+        MenuItem.from_json(json.dumps(menu))
+
+        context = {
+            'user': self.superuser,
+            'request': request,
+        }
+
+        res = lineup_breadcrumbs(context, 'main-menu')
+
+        self.assertEqual(res['items'], [])
+
+    def test_breadcrumbs_no_request(self):
+        context = {'key': 'abcd'}
+        res = lineup_breadcrumbs(context, 'main-menu')
+
+        self.assertEqual(res, context)
