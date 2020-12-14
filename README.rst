@@ -5,8 +5,8 @@ Django Lineup
 .. image:: https://badge.fury.io/py/django-lineup.svg
     :target: https://badge.fury.io/py/django-lineup
 
-.. image:: https://travis-ci.org/abidibo/django-lineup.svg?branch=master
-    :target: https://travis-ci.org/abidibo/django-lineup
+.. image:: https://travis-ci.org/otto-torino/django-lineup.svg?branch=master
+    :target: https://travis-ci.com/github/otto-torino/django-lineup
 
 .. image:: https://codecov.io/gh/abidibo/django-lineup/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/abidibo/django-lineup
