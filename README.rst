@@ -11,7 +11,9 @@ Django Lineup
 .. image:: https://codecov.io/gh/abidibo/django-lineup/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/abidibo/django-lineup
 
-Navigation system for django sites
+Multiple navigation system for django sites.
+
+Django Lineup lets you manage a tree of items. Each first level node represents a menu you can include in your templates.
 
 Documentation
 -------------
@@ -49,6 +51,79 @@ Be sure the ``requests`` context processor is included (it is by default):
       },
     ]
 
+Render a menu:::
+
+    {% load lineup_tags %}
+    {% lineup_menu 'my-root-item-slug '%}
+
+Render the breadcrumbs:::
+
+    {% load lineup_tags %}
+    {% lineup_breadcrumbs 'my-root-item-slug '%}
+
+Import a menu from a json:::
+
+    $ python manage.py import_menu_from_json
+
+Json example:::
+
+    {
+      "label": "Main Menu",
+      "slug": "main-menu",
+      "order": 0,
+      "children": [
+        {
+          "label": "Tools",
+          "slug": "tools",
+          "order": 0,
+          "children": [
+            {
+              "label": "DNS Tools",
+              "slug": "dns-tools",
+              "order": 0,
+              "login_required": true,
+              "children": [
+                {
+                  "label": "DMARC DNS Tools",
+                  "slug": "dmarc-dns-tools",
+                  "link": "/dmarc-tools/",
+                  "title": "DMARC Rulez",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "label": "Password Generator",
+              "slug": "password-generator",
+              "order": 1
+            }
+          ]
+        },
+        {
+          "label": "Disabled Item",
+          "slug": "disabled-item",
+          "order": 1,
+          "enabled": false,
+          "children": [
+            {
+              "label": "Disabled child",
+              "slug": "disabled-child",
+              "order": 0
+            }
+          ]
+        },
+        {
+          "label": "Perm Item",
+          "slug": "perm-item",
+          "order": 2,
+          "permissions": [
+            "add_permission",
+            "view_session"
+          ]
+        }
+      ]
+    }
+
 Features
 --------
 
@@ -56,6 +131,7 @@ Features
 - Render menu tree templatetags
 - Breadcrumbs templetetag
 - Import a menu from json management command
+- `Django Baton <https://github.com/otto-torino/django-baton>`_ integration to highlight different menu in the admin
 
 Running Tests
 -------------

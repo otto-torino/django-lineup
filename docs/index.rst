@@ -14,6 +14,8 @@ Contents:
    readme
    installation
    usage
+   templatetags
+   management_commands
    contributing
    authors
    history
