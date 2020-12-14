@@ -130,6 +130,7 @@ Features
 --------
 
 - Multiple menus supported
+- Visibility logic: login required / permissions
 - Render menu tree templatetags
 - Breadcrumbs templetetag
 - Import a menu from json management command
