@@ -15,6 +15,8 @@ Multiple navigation system for django sites.
 
 Django Lineup lets you manage a tree of items. Each first level node represents a menu you can include in your templates.
 
+.. image:: images/lineup.png
+
 Documentation
 -------------
 
