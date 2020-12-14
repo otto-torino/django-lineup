@@ -54,6 +54,8 @@ setup(
     url='https://github.com/otto-torino/django-lineup',
     packages=[
         'lineup',
+        'lineup.templatetags',
+        'lineup.management.commands',
     ],
     include_package_data=True,
     install_requires=[
