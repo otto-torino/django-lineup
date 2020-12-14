@@ -1,0 +1,7 @@
+{% spaceless %}
+{% if items|length %}
+    <div class="lineup-breadcrumbs">
+        {% for item in items  %}<a{% if item.link %} href="{{ item.link }}"{% endif %}{% if item.title %} title="{{ item.title }}"{% endif %}>{{ item }}</a>{% if not forloop.last %} › {% endif %}{% endfor %}
+    </div>
+{% endif %}
+{% endspaceless %}

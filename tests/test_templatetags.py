@@ -209,3 +209,16 @@ class LineupTagsTest(TestCase):
 
         expected = '\n<ul id="lineup-main-menu" class="level-0"><li class="has-children "><a>Tools</a><ul id="lineup-tools" class="level-1"><li class="has-children "><a>DNS Tools</a><ul id="lineup-dns-tools" class="level-2"><li class=""><a href="/dmarc-tools/" title="DMARC Rulez">DMARC DNS Tools</a></li></ul></li><li class=""><a>Password Generator</a></li></ul></li><li class=""><a>Perm Item</a></li></ul>\n'
         self.assertEqual(out, expected)
+
+    def test_breadcrumbs(self):
+        request = self.factory.get('/dmarc-tools/')
+        out = Template(
+            "{% load lineup_tags %}"
+            "{% lineup_breadcrumbs 'main-menu' %}"
+        ).render(Context({
+            'user': self.wrong_perm_user,
+            'request': request,
+        }))
+
+        expected = '<div class="lineup-breadcrumbs"><a>Tools</a> › <a>DNS Tools</a> › <a href="/dmarc-tools/" title="DMARC Rulez">DMARC DNS Tools</a></div>\n'
+        self.assertEqual(out, expected)

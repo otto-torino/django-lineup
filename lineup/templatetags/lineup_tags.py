@@ -114,3 +114,31 @@ def lineup_menu(context, item):
     context['level'] = level
 
     return context
+
+
+@register.inclusion_tag('lineup/breadcrumbs.html', takes_context=True)
+def lineup_breadcrumbs(context, slug):
+    '''
+    Renders menu breadcrumbs.
+    '''
+    if 'request' in context:
+        path = context['request'].META['PATH_INFO']
+        active_items = MenuItem.objects.enabled(link=path)
+
+        found = False
+        items = []
+        for active_item in active_items:
+            items.append(active_item)
+            parent = active_item.parent
+            while parent is not None and parent.enabled:
+                items.insert(0, parent)
+                parent = parent.parent
+            if items.pop(0).slug == slug:
+                found = True
+                break
+
+        if found:
+            context['items'] = items
+        else:
+            context['items'] = []
+    return context
