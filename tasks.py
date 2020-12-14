@@ -98,8 +98,6 @@ def release(c, bumpsize=''):
     if bumpsize:
         bumpsize = '--' + bumpsize
 
-    c.run("bumpversion {bump} --no-input".format(bump=bumpsize))
-
     import lineup
     c.run("python setup.py sdist bdist_wheel")
     c.run("twine upload dist/*")
