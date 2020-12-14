@@ -51,7 +51,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author='abidibo',
     author_email='abidibo@gmail.com',
-    url='https://github.com/abidibo/django-lineup',
+    url='https://github.com/otto-torino/django-lineup',
     packages=[
         'lineup',
     ],
