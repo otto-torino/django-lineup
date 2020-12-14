@@ -28,6 +28,7 @@ class MenuItemInline(admin.StackedInline):
 class MenuItemAdmin(MPTTModelAdmin):
     list_display = ('slug', 'label', 'parent', 'link', 'order', 'login_required', 'enabled', )
     list_filter = (('parent', RelatedDropdownFilter, ) if baton else 'parent', 'enabled', 'login_required', )
+    list_editable = ('order', )
     search_fields = ('label', )
     filter_horizontal = ('permissions', )
     inlines = [MenuItemInline, ]
