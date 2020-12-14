@@ -37,10 +37,10 @@ def coverage(c):
     """
     check code coverage quickly with the default Python
     """
-    c.run("coverage run --source django-lineup runtests.py tests")
+    c.run("coverage run --source lineup runtests.py tests")
     c.run("coverage report -m")
     c.run("coverage html")
-    c.run("open htmlcov/index.html")
+    c.run("xdg-open htmlcov/index.html")
 
 
 @task
