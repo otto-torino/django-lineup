@@ -44,6 +44,8 @@ if sys.argv[-1] == 'tag':
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
+REPO_URL = 'https://github.com/otto-torino/django-lineup'
+
 setup(
     name='django-lineup',
     version=version,
@@ -51,7 +53,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author='abidibo',
     author_email='abidibo@gmail.com',
-    url='https://github.com/otto-torino/django-lineup',
+    url=REPO_URL,
     packages=[
         'lineup',
         'lineup.templatetags',
@@ -76,4 +78,9 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ],
+    project_urls={
+        'Documentation': 'https://django-lineup.readthedocs.io/en/latest/',
+        'Source': REPO_URL,
+        'Tracker': REPO_URL + '/issues',
+    },
 )
