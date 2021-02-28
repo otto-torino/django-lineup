@@ -47,7 +47,7 @@ class MenuItemAdmin(MPTTModelAdmin):
         }),
     )
 
-    def baton_cl_rows_attributes(self, request):
+    def baton_cl_rows_attributes(self, request, cl):
         data = {}
         for item in MenuItem.objects.filter(parent__isnull=True):
             data[item.id] = {
