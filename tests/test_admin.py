@@ -58,7 +58,7 @@ class LineupAdminTest(TestCase):
     def test_baton_integration(self):
         request = self.factory.get('/admin/')
         admin = MenuItemAdmin(model=MenuItem, admin_site=AdminSite())
-        rows_attributes = admin.baton_cl_rows_attributes(request)
+        rows_attributes = admin.baton_cl_rows_attributes(request, None)
 
         expected = '{"1": {"class": "table-info"}}'
         self.assertEqual(expected, rows_attributes)
