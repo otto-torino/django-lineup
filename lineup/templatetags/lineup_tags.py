@@ -98,7 +98,8 @@ def refactor_items(items):
 
     for item in items:
         try:
-            item['instance'].extras = prepare_extras(item['instance'].extras)
+            if item['instance'].extras:
+                item['instance'].extras = prepare_extras(item['instance'].extras)
         except Exception as e:
             print(e)
             pass

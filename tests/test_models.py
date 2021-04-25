@@ -36,7 +36,7 @@ class TreeOrder(TransactionTestCase):
                 slug=str(i),
                 order=i,
                 link='/',
-                extras="icon='fa-user'"}
+                extras="icon='fa-user'"
             )
             child[i].save()
         order = [c.order for c in primary_nav.children.all()]
