@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='menuitem',
             name='extras',
-            field=models.JSONField(blank=True, help_text='Add extra-paramaters on menu item eg: icon,... usable in template', null=True, verbose_name='extras'),
+            field=models.CharField(blank=True, help_text="Add extra-paramaters on menu item eg: icon='fa- fa-user'", max_length=255, null=True, verbose_name='extras'),
         ),
     ]
