@@ -329,13 +329,13 @@ class LineupTagsTest(TestCase):
         self.assertEqual(res, context)
 
 
-    def test_prepare_extras_ok(self)
+    def test_prepare_extras_ok(self):
         extras = "icon=fa-user, status=end"
         res = prepare_extras(extras)
 
         self.assertEqual(type(res), dict)
 
-    def test_prepare_extras_wrong(self)
+    def test_prepare_extras_wrong(self):
         extras = "icon=fa-user status=end"
         res = prepare_extras(extras)
 
