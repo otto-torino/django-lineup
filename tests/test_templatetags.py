@@ -339,4 +339,4 @@ class LineupTagsTest(TestCase):
         extras = "icon=fa-user status=end"
         res = prepare_extras(extras)
 
-        self.assertEqual(type(res), None)
+        self.assertEqual(res, None)
