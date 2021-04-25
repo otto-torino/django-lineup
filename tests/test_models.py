@@ -25,7 +25,7 @@ class TreeOrder(TransactionTestCase):
             label='primary-nav',
             slug='primary-nav',
             order=0,
-            extras="icon='fa-cogs'"}
+            extras="icon='fa-cogs'"
         )
         primary_nav.save()
         child = {}
