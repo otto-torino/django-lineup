@@ -49,7 +49,7 @@ class LineupCommandImportFromJson(TestCase):
     def test_import_menu_from_json_ok(self):
         self.assertEqual(MenuItem.objects.filter(slug='imported-menu').count(), 0)
         f = tempfile.NamedTemporaryFile()
-        f.write(b'{"label": "Root", "slug": "imported-menu", "order": 0, "children": [{ "label": "Tools", "slug": "tools", "link": "/tools/", "order": 0, "extras": "icon="fa-user"" }]}')
+        f.write(b'{"label": "Root", "slug": "imported-menu", "order": 0, "children": [{ "label": "Tools", "slug": "tools", "link": "/tools/", "order": 0, "extras": "icon=fa-user,status=end" }]}')
         f.seek(os.SEEK_SET)
         call_command('import_menu_from_json', f.name)
         self.assertEqual(MenuItem.objects.filter(slug='imported-menu').count(), 1)
