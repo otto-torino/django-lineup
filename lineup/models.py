@@ -48,6 +48,12 @@ class MenuItem(MPTTModel):
             'If empty, the menu item will be publicly visible, otherwise only users with at least one of the selected permissions could see it.'
         )  # noqa
     )
+    extras = models.JSONField(
+        verbose_name=_('extras'),
+        blank=True,
+        null=True,
+        help_text=_('Add extra-paramaters on menu item eg: icon,... usable in template')
+    )
 
     objects = MenuItemManager()
 
@@ -93,6 +99,7 @@ class MenuItem(MPTTModel):
             title=d.get('title', None),
             enabled=d.get('enabled', True),
             login_required=d.get('login_required', False),
+            extras=d.get('extras', {})
         )
 
         for permission_code in d.get('permissions', []):
