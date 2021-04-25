@@ -86,8 +86,11 @@ def prepare_extras(extras):
     Convert extras string to dictionnary.
     Strip single and double-quote
     '''
-    dictionary = dict([i.replace("'","").replace('"','') for i in s.split("=")] for s in extras.split(","))
-    return dictionary
+    try:
+        dictionary = dict([i.replace("'","").replace('"','').strip() for i in s.split("=")] for s in extras.split(","))
+        return dictionary
+    except:
+        raise Exception("Wrong separator used.")
 
 
 def refactor_items(items):

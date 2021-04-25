@@ -15,7 +15,7 @@ from django.template import Context, Template
 
 from lineup.models import MenuItem
 from lineup import exceptions
-from lineup.templatetags.lineup_tags import lineup_menu, lineup_breadcrumbs
+from lineup.templatetags.lineup_tags import lineup_menu, lineup_breadcrumbs, prepare_extras
 
 
 class LineupTagsTest(TestCase):
@@ -327,3 +327,16 @@ class LineupTagsTest(TestCase):
         res = lineup_breadcrumbs(context, 'main-menu')
 
         self.assertEqual(res, context)
+
+
+    def test_prepare_extras_ok(self)
+        extras = "icon=fa-user, status=end"
+        res = prepare_extras(extras)
+
+        self.assertEqual(type(res), dict)
+
+    def test_prepare_extras_wrong(self)
+        extras = "icon=fa-user status=end"
+        res = prepare_extras(extras)
+
+        self.assertEqual(type(res), None)
