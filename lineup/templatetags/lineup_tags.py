@@ -102,9 +102,11 @@ def refactor_items(items):
     new_items = []
 
     for item in items:
-        if item['instance'].extras:
-            item['instance'].extras = prepare_extras(item['instance'].extras)
-            
+        try:
+            if item['instance'].extras:
+                item['instance'].extras = prepare_extras(item['instance'].extras)
+        except Exception as e:
+            pass
         new_items.append(item)
     
     return new_items
