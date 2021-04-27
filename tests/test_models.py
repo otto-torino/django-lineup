@@ -85,3 +85,28 @@ class TreeOrder(TransactionTestCase):
             self.fail()
         except IntegrityError:
             pass
+
+    def test_extras_dict(self):
+        item = models.MenuItem(
+            label='Item',
+            slug='item',
+            link='/item/',
+            order=0,
+            extras='icon="fa fa-user", data-tooltip="Go home!"'
+        )
+        item.save()
+        self.assertEqual(item.extras_dict(), {
+            "icon": "fa fa-user",
+            "data-tooltip": "Go home!"
+        })
+
+    def test_extras_dict_wrong(self):
+        item = models.MenuItem(
+            label='Item',
+            slug='item',
+            link='/item/',
+            order=0,
+            extras='icon="fa fa-user" data-tooltip="Go home!"'
+        )
+        item.save()
+        self.assertEqual(item.extras_dict(), {})

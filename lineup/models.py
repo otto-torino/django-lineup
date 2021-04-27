@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
 import logging
+import re
 
 from django.contrib.auth.models import Permission
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 from django.db import transaction
 
 from mptt.models import MPTTModel, TreeForeignKey
@@ -46,17 +48,15 @@ class MenuItem(MPTTModel):
         verbose_name=_("permissions"),
         blank=True,
         help_text=_(
-            "If empty, the menu item will be publicly visible, otherwise only users with at least one of the selected permissions could see it."
-        ),  # noqa
+            "If empty, the menu item will be publicly visible, otherwise only users with at least one of the selected permissions could see it."  # noqa
+        ),
     )
     extras = models.CharField(
         _("extras"),
         max_length=255,
         blank=True,
         null=True,
-        help_text=_(
-            "Add extra-paramaters on menu item eg: icon='fa- fa-user'"
-        ),
+        help_text=mark_safe(_("Comma separated list of extra-attributes, e.g.: <code>icon=\"fa fa-user\",data-tooltip=\"Go home!\"</code>")),
     )
 
     objects = MenuItemManager()
@@ -120,3 +120,12 @@ class MenuItem(MPTTModel):
 
     def is_active(self, path):
         return self.link and self.link == path
+
+    def extras_dict(self):
+        try:
+            return dict(
+                [re.sub('"|\'', '', i).strip() for i in s.split("=")]
+                for s in self.extras.split(",")
+            )
+        except Exception:
+            return {}
