@@ -81,6 +81,35 @@ def create_tree(context, root, parent=None):
 
     return el
 
+def prepare_extras(extras):
+    '''
+    Convert extras string to dictionnary.
+    Strip single and double-quote
+    '''
+    dictionary = None
+    try:
+        dictionary = dict([i.replace("'","").replace('"','').strip() for i in s.split("=")] for s in extras.split(","))
+    except:
+        pass
+    
+    return dictionary
+
+
+def refactor_items(items):
+    '''
+    Refactor item to transform extras string to dictionnary
+    '''
+    new_items = []
+
+    for item in items:
+        try:
+            if item['instance'].extras:
+                item['instance'].extras = prepare_extras(item['instance'].extras)
+        except Exception as e:
+            pass
+        new_items.append(item)
+    
+    return new_items
 
 @register.inclusion_tag('lineup/menu.html', takes_context=True)
 def lineup_menu(context, item):
@@ -104,12 +133,13 @@ def lineup_menu(context, item):
         items = item.get('children')
         slug = item.get('instance').slug
         level = item.get('instance').level
+        
     else:
         items = []
         slug = None
         level = None
 
-    context['items'] = items
+    context['items'] = refactor_items(items)
     context['slug'] = slug
     context['level'] = level
 
@@ -138,7 +168,7 @@ def lineup_breadcrumbs(context, slug):
                 break
 
         if found:
-            context['items'] = items
+            context['items'] = refactor_items(items)
         else:
             context['items'] = []
     return context
