@@ -26,6 +26,7 @@ class MenuItemInline(admin.StackedInline):
 
 @admin.register(MenuItem)
 class MenuItemAdmin(MPTTModelAdmin):
+    change_list_template = "admin/lineup/menuitem/change_list.html"
     list_display = ('slug', 'label', 'parent', 'link', 'order', 'login_required', 'enabled', )
     list_filter = (('parent', RelatedDropdownFilter, ) if baton else 'parent', 'enabled', 'login_required', )
     list_editable = ('order', )
