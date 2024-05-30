@@ -39,6 +39,14 @@ Add it to your `INSTALLED_APPS`:
         ...
     )
 
+Add to your main `urls.py`:
+
+.. code-block:: python
+
+    ...
+    path("lineup/", include("lineup.urls", namespace="lineup")),
+    ...
+
 Make sure the ``requests`` context processor is included (it is by default):
 
 .. code-block:: python
@@ -134,6 +142,7 @@ Features
 - Render menu tree templatetags
 - Breadcrumbs templetetag
 - Import a menu from json management command
+- Rebuild tree button in admin
 - `Django Baton <https://github.com/otto-torino/django-baton>`_ integration to highlight different menu in the admin
 
 Running Tests
