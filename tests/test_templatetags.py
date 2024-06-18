@@ -38,9 +38,8 @@ class LineupTagsTest(TestCase):
             email='abidibo@gmail.com',
         )
 
-        for p in Permission.objects.all():
-            print(p.id, p.codename)
-        # [(10, 'change_group'), (5, 'add_permission'), (8, 'view_permission'), (24, 'view_session')]
+        # for p in Permission.objects.all():
+        #     print(p.id, p.codename)
         self.permissions = Permission.objects.filter(codename__in=['add_permission', 'change_group', 'view_permission', 'view_session'])
         self.user.user_permissions.add(self.permissions[0])
         self.user.user_permissions.add(self.permissions[2])
