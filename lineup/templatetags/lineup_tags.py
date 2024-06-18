@@ -26,6 +26,12 @@ def get_all_user_permissions_id_list(user):
     return perms + group_perms
 
 
+def remove_prefix(text, prefix): # TODO: introduce in python 3.9, so this can be removed
+    if text.startswith(prefix):
+        return text[len(prefix):]
+    return text
+
+
 def set_active_voice(path, items):
     """
     Sets the active property to the active voice, and with_active to
@@ -35,7 +41,7 @@ def set_active_voice(path, items):
     l = LocalePrefixPattern(prefix_default_language=True)
     prefix = l.language_prefix
     for item in items:
-        if item.get("instance").is_active(path, prefix):
+        if item.get("instance").is_active(remove_prefix(path, prefix)):
             item["active"] = True
             parent = item.get("parent")
             while parent is not None:
