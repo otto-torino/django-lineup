@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+from django.core.cache import cache
 
 from django import template
 from django.contrib.auth.models import Permission
@@ -96,11 +97,23 @@ def lineup_menu(context, item):
     """
     if isinstance(item, str):
         try:
-            root = MenuItem.objects.prefetch_related("children", "permissions").annotate(permissions_count=Count("permissions")).get(slug=item)
-            tree = create_tree(context, root)
-            items = tree.get("children", [])
-            slug = item
-            level = root.level
+            # cache depends on user (permissions) and path (active item)
+            path = ""
+            user = context.get("user")
+            if "request" in context:
+                path = context["request"].META["PATH_INFO"]
+            t = cache.get_or_set("lineup", {}, None)
+            key = "%s:%s" % (user.id, path)
+            if t.get(key, None) is None:
+                root = MenuItem.objects.prefetch_related("children", "permissions").annotate(permissions_count=Count("permissions")).get(slug=item)
+                tree = create_tree(context, root)
+                items = tree.get("children", [])
+                slug = item
+                level = root.level
+                t[key] = (items, slug, level)
+                cache.set("lineup", t, None)
+            else:
+                (items, slug, level) = t[key]
         except MenuItem.DoesNotExist:
             logger.error("Provided lineup menu slug %s not found" % item)
             return context
