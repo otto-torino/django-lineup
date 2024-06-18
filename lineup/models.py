@@ -118,8 +118,10 @@ class MenuItem(MPTTModel):
 
         return item
 
-    def is_active(self, path):
-        return self.link and self.link == path
+    def is_active(self, path, prefix=""):
+        if prefix != "":
+            prefix = "/" + prefix[:-1]
+        return self.link and "%s%s" % (prefix, self.link) == path
 
     def extras_dict(self):
         try:

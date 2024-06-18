@@ -4,6 +4,7 @@ import logging
 from django import template
 from django.contrib.auth.models import Permission
 from django.db.models import Q, Count
+from django.urls import LocalePrefixPattern
 
 from ..models import MenuItem
 
@@ -29,8 +30,11 @@ def set_active_voice(path, items):
     Sets the active property to the active voice, and with_active to
     all its parents
     """
+
+    l = LocalePrefixPattern(prefix_default_language=True)
+    prefix = l.language_prefix
     for item in items:
-        if item.get("instance").is_active(path):
+        if item.get("instance").is_active(path, prefix):
             item["active"] = True
             parent = item.get("parent")
             while parent is not None:
