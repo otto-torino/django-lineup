@@ -3,7 +3,7 @@ import logging
 
 from django import template
 from django.contrib.auth.models import Permission
-from django.db.models import Q
+from django.db.models import Q, Count
 
 from ..models import MenuItem
 
@@ -48,16 +48,16 @@ def create_tree(context, root, parent=None):
 
     # if root visibility restrictions and user is not authenticated do not show children
     if not user.is_authenticated and (
-        root.login_required or root.permissions.count()
+        root.login_required or root.permissions_count > 0
     ):  # noqa
         return {}
 
     if not user.is_authenticated:
         # unlogged user sees only public items
-        items = root.children.enabled(login_required=False, permissions=None)
+        items = root.children.enabled(login_required=False, permissions=None).annotate(permissions_count=Count("permissions"))
     elif user.is_superuser:
         # superuser sees all enabled items
-        items = root.children.enabled()
+        items = root.children.enabled().annotate(permissions_count=Count("permissions"))
     else:
         # logged in user which is not superuse should check for permissions
         permissions = context.get("lineup_permissions", None)
@@ -68,7 +68,7 @@ def create_tree(context, root, parent=None):
 
         items = root.children.enabled(
             Q(permissions__id__in=permissions) | Q(permissions=None)
-        ).distinct()
+        ).annotate(permissions_count=Count("permissions")).distinct()
 
     # parent needed to traverse upward for has-active functionality
     el = {"instance": root, "parent": parent}
@@ -92,7 +92,7 @@ def lineup_menu(context, item):
     """
     if isinstance(item, str):
         try:
-            root = MenuItem.objects.get(slug=item)
+            root = MenuItem.objects.prefetch_related("children", "permissions").annotate(permissions_count=Count("permissions")).get(slug=item)
             tree = create_tree(context, root)
             items = tree.get("children", [])
             slug = item
