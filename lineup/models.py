@@ -8,6 +8,9 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.db import transaction
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
+from django.core.cache import cache
 
 from mptt.models import MPTTModel, TreeForeignKey
 
@@ -118,7 +121,7 @@ class MenuItem(MPTTModel):
 
         return item
 
-    def is_active(self, path):
+    def is_active(self, path, prefix=""):
         return self.link and self.link == path
 
     def extras_dict(self):
@@ -129,3 +132,8 @@ class MenuItem(MPTTModel):
             )
         except Exception:
             return {}
+
+@receiver(post_save, sender=MenuItem)
+@receiver(post_delete, sender=MenuItem)
+def clear_lineup_cache(sender , **kwargs):
+    cache.delete("lineup")

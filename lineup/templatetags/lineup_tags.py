@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import logging
+from django.core.cache import cache
 
 from django import template
 from django.contrib.auth.models import Permission
-from django.db.models import Q
+from django.db.models import Q, Count
+from django.urls import LocalePrefixPattern
 
 from ..models import MenuItem
 
@@ -24,13 +26,22 @@ def get_all_user_permissions_id_list(user):
     return perms + group_perms
 
 
+def remove_prefix(text, prefix): # TODO: introduce in python 3.9, so this can be removed
+    if text.startswith(prefix):
+        return text[len(prefix):]
+    return text
+
+
 def set_active_voice(path, items):
     """
     Sets the active property to the active voice, and with_active to
     all its parents
     """
+
+    l = LocalePrefixPattern(prefix_default_language=True)
+    prefix = l.language_prefix
     for item in items:
-        if item.get("instance").is_active(path):
+        if item.get("instance").is_active(remove_prefix(path, prefix)):
             item["active"] = True
             parent = item.get("parent")
             while parent is not None:
@@ -48,16 +59,16 @@ def create_tree(context, root, parent=None):
 
     # if root visibility restrictions and user is not authenticated do not show children
     if not user.is_authenticated and (
-        root.login_required or root.permissions.count()
+        root.login_required or root.permissions_count > 0
     ):  # noqa
         return {}
 
     if not user.is_authenticated:
         # unlogged user sees only public items
-        items = root.children.enabled(login_required=False, permissions=None)
+        items = root.children.enabled(login_required=False, permissions=None).annotate(permissions_count=Count("permissions"))
     elif user.is_superuser:
         # superuser sees all enabled items
-        items = root.children.enabled()
+        items = root.children.enabled().annotate(permissions_count=Count("permissions"))
     else:
         # logged in user which is not superuse should check for permissions
         permissions = context.get("lineup_permissions", None)
@@ -68,7 +79,7 @@ def create_tree(context, root, parent=None):
 
         items = root.children.enabled(
             Q(permissions__id__in=permissions) | Q(permissions=None)
-        ).distinct()
+        ).annotate(permissions_count=Count("permissions")).distinct()
 
     # parent needed to traverse upward for has-active functionality
     el = {"instance": root, "parent": parent}
@@ -92,11 +103,23 @@ def lineup_menu(context, item):
     """
     if isinstance(item, str):
         try:
-            root = MenuItem.objects.get(slug=item)
-            tree = create_tree(context, root)
-            items = tree.get("children", [])
-            slug = item
-            level = root.level
+            # cache depends on user (permissions) and path (active item)
+            path = ""
+            user = context.get("user")
+            if "request" in context:
+                path = context["request"].META["PATH_INFO"]
+            t = cache.get_or_set("lineup", {}, None)
+            key = "%s:%s" % (user.id, path)
+            if t.get(key, None) is None:
+                root = MenuItem.objects.prefetch_related("children", "permissions").annotate(permissions_count=Count("permissions")).get(slug=item)
+                tree = create_tree(context, root)
+                items = tree.get("children", [])
+                slug = item
+                level = root.level
+                t[key] = (items, slug, level)
+                cache.set("lineup", t, None)
+            else:
+                (items, slug, level) = t[key]
         except MenuItem.DoesNotExist:
             logger.error("Provided lineup menu slug %s not found" % item)
             return context
