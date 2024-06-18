@@ -46,7 +46,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'django-lineup'
-copyright = u'2020, Otto SRL'
+copyright = u'2020-2024, Otto SRL'
 author = u'abidibo'
 
 # The version info for the project you're documenting, acts as replacement for
