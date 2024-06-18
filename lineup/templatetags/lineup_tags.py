@@ -109,7 +109,7 @@ def lineup_menu(context, item):
             if "request" in context:
                 path = context["request"].META["PATH_INFO"]
             t = cache.get_or_set("lineup", {}, None)
-            key = "%s:%s" % (user.id, path)
+            key = "%s:%s:%s" % (item, user.id, path)
             if t.get(key, None) is None:
                 root = MenuItem.objects.prefetch_related("children", "permissions").annotate(permissions_count=Count("permissions")).get(slug=item)
                 tree = create_tree(context, root)
