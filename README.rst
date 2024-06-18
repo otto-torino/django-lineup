@@ -11,6 +11,9 @@ Django Lineup
 .. image:: https://codecov.io/gh/otto-torino/django-lineup/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/otto-torino/django-lineup
 
+.. image:: https://static.pepy.tech/badge/django-lineup
+    :target: https://pepy.tech/project/django-lineup
+
 Multiple navigation system for django sites.
 
 Django Lineup lets you manage a tree of items. Each first level node represents a menu you can include in your templates.
