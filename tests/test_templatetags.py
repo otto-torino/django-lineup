@@ -38,8 +38,10 @@ class LineupTagsTest(TestCase):
             email='abidibo@gmail.com',
         )
 
+        for p in Permission.objects.all():
+            print(p.id, p.codename)
         # [(10, 'change_group'), (5, 'add_permission'), (8, 'view_permission'), (24, 'view_session')]
-        self.permissions = Permission.objects.filter(id__in=[5, 8, 10, 24])
+        self.permissions = Permission.objects.filter(codename__in=['add_permission', 'change_group', 'view_permission', 'view_session'])
         self.user.user_permissions.add(self.permissions[0])
         self.user.user_permissions.add(self.permissions[2])
 
@@ -151,8 +153,8 @@ class LineupTagsTest(TestCase):
         self.assertEqual(children[0].slug, 'tools')
         self.assertEqual(children[0].children.all()[0].login_required, True)
         self.assertEqual(children[1].enabled, False)
-        self.assertEqual(children[2].permissions.all()[0].id, 5)
-        self.assertEqual(children[2].permissions.all()[1].id, 24)
+        self.assertEqual(children[2].permissions.all()[0].codename, 'add_permission')
+        self.assertEqual(children[2].permissions.all()[1].codename, 'view_session')
 
     def test_linup_menu_wrong_item_type(self):
         context = {}
