@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from mptt.admin import MPTTModelAdmin
 
 from .models import MenuItem
+from .forms import MenuItemForm
 
 baton = 'baton' in sys.modules
 
@@ -19,6 +20,7 @@ class MenuItemInline(admin.StackedInline):
     Tabular Inline View for MenuItem
     '''
     model = MenuItem
+    form = MenuItemForm
     extra = 1
     classes = ('collapse-entry', 'expand-first', )
     prepopulated_fields = {'slug': ('label',)}
@@ -26,6 +28,7 @@ class MenuItemInline(admin.StackedInline):
 
 @admin.register(MenuItem)
 class MenuItemAdmin(MPTTModelAdmin):
+    form = MenuItemForm
     change_list_template = "admin/lineup/menuitem/change_list.html"
     list_display = ('slug', 'label', 'parent', 'link', 'order', 'login_required', 'enabled', )
     list_filter = (('parent', RelatedDropdownFilter, ) if baton else 'parent', 'enabled', 'login_required', )
