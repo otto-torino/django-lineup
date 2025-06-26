@@ -3,6 +3,12 @@
 History
 -------
 
+1.0.0 (2025-06-26)
+++++++++++++++++++
+
+* Fix migrations (breaking change)
+* Fix active menu item class
+
 0.3.4 (2024-06-18)
 ++++++++++++++++++
 
