@@ -6,7 +6,7 @@ from django import template
 from django.contrib.auth.models import Permission
 from django.db.models import Q, Count
 from django.urls import LocalePrefixPattern
-
+from django.utils.translation import get_language
 from ..models import MenuItem
 
 register = template.Library()
@@ -26,22 +26,24 @@ def get_all_user_permissions_id_list(user):
     return perms + group_perms
 
 
-def remove_prefix(text, prefix): # TODO: introduce in python 3.9, so this can be removed
-    if text.startswith(prefix):
-        return text[len(prefix):]
-    return text
-
-
 def set_active_voice(path, items):
     """
     Sets the active property to the active voice, and with_active to
     all its parents
     """
+    lang_code = get_language()
+    path_to_check = path
 
-    l = LocalePrefixPattern(prefix_default_language=True)
-    prefix = l.language_prefix
+    if lang_code:
+        prefix_to_remove = f"/{lang_code}"
+
+        if path.startswith(prefix_to_remove):
+            path_to_check = path.removeprefix(prefix_to_remove)
+            if not path_to_check.startswith('/'):
+                path_to_check = '/' + path_to_check
+
     for item in items:
-        if item.get("instance").is_active(remove_prefix(path, prefix)):
+        if item.get("instance").is_active(path_to_check):
             item["active"] = True
             parent = item.get("parent")
             while parent is not None:

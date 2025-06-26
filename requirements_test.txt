@@ -6,4 +6,4 @@ codecov>=2.0.0
 
 # Additional test requirements go here
 django-mptt>=0.11.0
-django-baton
+django-baton==5.0.2

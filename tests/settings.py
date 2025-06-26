@@ -31,13 +31,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mptt',
-    'lineup.apps.LineupConfig',
+    'lineup',
     'baton.autodiscover',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -100,6 +101,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
+# LANGUAGES = (
+#     ('en', 'English'),
+#     ('it', 'Italian'),
+# )
+
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -134,7 +140,7 @@ BATON = {
             'type': 'app',
             'name': 'auth',
             'label': 'Authentication',
-            'icon': 'fa fa-lock',
+            'icon': 'lock',
             'models': (
                 {
                     'name': 'user',
@@ -147,6 +153,6 @@ BATON = {
             )
         },
         {'type': 'title', 'label': 'Contents', 'apps': ('lineup', )},
-        {'type': 'model', 'label': 'Menu', 'name': 'menuitem', 'app': 'lineup', 'icon': 'fa fa-bars'},
+        {'type': 'model', 'label': 'Menu', 'name': 'menuitem', 'app': 'lineup', 'icon': 'menu'},
     ),
 }

@@ -5,7 +5,12 @@
         <title>Django Lineup TestApp</title>
     </head>
     <body>
-        {% lineup_menu 'main-menu' %}
-        {% lineup_breadcrumbs 'main-menu' %}
+        <main>
+            {% lineup_menu 'main-menu' %}
+            {% lineup_breadcrumbs 'main-menu' %}
+        </main>
+        <aside>
+            {% lineup_menu 'sidebar-menu' %}
+        </aside>
     </body>
 </html>

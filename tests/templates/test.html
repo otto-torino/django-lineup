@@ -1,0 +1,18 @@
+{% load lineup_tags %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test | Django Lineup TestApp</title>
+    </head>
+    <body>
+        <main>
+            {% lineup_menu 'main-menu' %}
+            {% lineup_breadcrumbs 'main-menu' %}
+
+            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolore, eveniet impedit expedita tempore blanditiis, ullam dolores optio porro quos officiis adipisci, quo perferendis nulla alias itaque corporis nihil amet accusantium.</p>
+        </main>
+        <aside>
+            {% lineup_menu 'sidebar-menu' %}
+        </aside>
+    </body>
+</html>
