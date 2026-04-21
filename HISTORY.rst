@@ -3,6 +3,11 @@
 History
 -------
 
+1.0.1 (2026-04-21)
+++++++++++++++++++
+
+* Django 6 compatibility: pin django-mptt>=0.17.0, add Django 6.0 to test matrix, update classifiers
+
 1.0.0 (2025-06-26)
 ++++++++++++++++++
 
