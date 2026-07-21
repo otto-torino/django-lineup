@@ -32,6 +32,9 @@ Install Django Lineup::
 
     pip install django-lineup
 
+``django-mptt`` is installed automatically as an internal dependency; it does
+not need to be added to your project's ``INSTALLED_APPS``.
+
 Add it to your `INSTALLED_APPS`:
 
 .. code-block:: python
@@ -183,9 +186,7 @@ To run this example, follow these instructions:
 
 		pip install -r requirements_test.txt
 
-3. Make and apply migrations
-
-		python manage.py makemigrations
+3. Apply migrations
 
 		python manage.py migrate
 

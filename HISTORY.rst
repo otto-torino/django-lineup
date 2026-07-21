@@ -3,10 +3,14 @@
 History
 -------
 
-1.0.1 (2026-04-21)
+1.0.1 (2026-07-21)
 ++++++++++++++++++
 
 * Django 6 compatibility: pin django-mptt>=0.17.0, add Django 6.0 to test matrix, update classifiers
+* Prevent false missing-migration reports in projects using ``BigAutoField``
+* Do not require ``mptt`` in the host project's ``INSTALLED_APPS``
+* Include every Lineup subpackage (including migrations) in distributions
+* Publish releases from GitHub Actions using PyPI Trusted Publishing
 
 1.0.0 (2025-06-26)
 ++++++++++++++++++

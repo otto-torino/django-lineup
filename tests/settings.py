@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mptt',
     'lineup',
     'baton.autodiscover',
 ]
@@ -113,6 +112,10 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+# Simulate the default used by modern Django projects. Lineup must retain the
+# AutoField primary key recorded in its own initial migration.
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/

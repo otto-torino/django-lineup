@@ -87,21 +87,3 @@ def lint(c):
     Check style with flake8
     """
     c.run("flake8 django-lineup tests")
-
-
-@task(help={'bumpsize': 'Bump either for a "feature" or "breaking" change'})
-def release(c, bumpsize=''):
-    """
-    Package and upload a release
-    """
-    clean(c)
-    if bumpsize:
-        bumpsize = '--' + bumpsize
-
-    import lineup
-    c.run("python setup.py sdist bdist_wheel")
-    c.run("twine upload dist/*")
-
-    c.run('git tag -a {version} -m "New version: {version}"'.format(version=lineup.__version__))
-    c.run("git push --tags")
-    c.run("git push origin master")

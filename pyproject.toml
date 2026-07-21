@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=77.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "django-lineup"
+version = "1.0.1"
+description = "Navigation system for Django sites"
+readme = { file = "README.rst", content-type = "text/x-rst" }
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [
+    { name = "Otto", email = "opensource@otto.srl" },
+]
+keywords = ["django", "navigation", "menu", "mptt"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.0",
+    "Framework :: Django :: 6.0",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "Django>=4.2",
+    "django-mptt>=0.17.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/otto-torino/django-lineup"
+Documentation = "https://django-lineup.readthedocs.io/en/latest/"
+Repository = "https://github.com/otto-torino/django-lineup"
+"Bug Tracker" = "https://github.com/otto-torino/django-lineup/issues"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["lineup", "lineup.*"]
+exclude = ["tests", "tests.*", "docs", "docs.*"]

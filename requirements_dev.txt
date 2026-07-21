@@ -1,5 +1,5 @@
 invoke
+build
 twine
 wheel
-zest.releaser
 sphinx_rtd_theme

@@ -8,7 +8,11 @@ Tests for `django-lineup` admin module.
 """
 
 import json
+from django.apps import apps
+from django.contrib.auth import get_user_model
+from django.template.loader import get_template
 from django.test import TestCase, RequestFactory
+from django.urls import reverse
 
 from django.contrib.admin.sites import AdminSite
 from lineup.admin import MenuItemAdmin
@@ -62,3 +66,16 @@ class LineupAdminTest(TestCase):
 
         expected = '{"1": {"class": "table-info"}}'
         self.assertEqual(expected, rows_attributes)
+
+    def test_admin_template_does_not_require_mptt_app(self):
+        self.assertFalse(apps.is_installed('mptt'))
+        get_template('admin/lineup/menuitem/change_list.html')
+
+        user = get_user_model().objects.create_superuser(
+            username='admin',
+            email='admin@example.com',
+            password='password',
+        )
+        self.client.force_login(user)
+        response = self.client.get(reverse('admin:lineup_menuitem_changelist'))
+        self.assertEqual(response.status_code, 200)

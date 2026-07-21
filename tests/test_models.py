@@ -8,6 +8,7 @@ Tests for `django-lineup` models module.
 """
 
 from django.test import TransactionTestCase
+from django.db import models as django_models
 from django.db.utils import IntegrityError
 from lineup import models
 
@@ -41,6 +42,10 @@ class TreeOrder(TransactionTestCase):
             child[i].save()
         order = [c.order for c in primary_nav.children.all()]
         self.assertEqual(list(order), sorted(order))
+
+    def test_primary_key_matches_packaged_migration(self):
+        self.assertIsInstance(models.MenuItem._meta.pk, django_models.AutoField)
+        self.assertNotIsInstance(models.MenuItem._meta.pk, django_models.BigAutoField)
 
     def test_creation(self):
         item = models.MenuItem(

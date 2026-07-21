@@ -2,6 +2,7 @@
 import sys
 import json
 from django.contrib import admin
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from mptt.admin import MPTTModelAdmin
@@ -30,7 +31,7 @@ class MenuItemInline(admin.StackedInline):
 class MenuItemAdmin(MPTTModelAdmin):
     form = MenuItemForm
     change_list_template = "admin/lineup/menuitem/change_list.html"
-    list_display = ('slug', 'label', 'parent', 'link', 'order', 'login_required', 'enabled', )
+    list_display = ('indented_slug', 'label', 'parent', 'link', 'order', 'login_required', 'enabled', )
     list_filter = (('parent', RelatedDropdownFilter, ) if baton else 'parent', 'enabled', 'login_required', )
     list_editable = ('order', )
     search_fields = ('label', )
@@ -50,6 +51,14 @@ class MenuItemAdmin(MPTTModelAdmin):
             'description': _('Yuo can decide to disable or restrict the visibility of this voice and consequently of all its children. Keep in mind that also if a child is publicly visible, but this voice requires a login, then the child will not be visible to not logged users. The same happens for permissions restrictions.')
         }),
     )
+
+    @admin.display(description=_('slug'), ordering='slug')
+    def indented_slug(self, obj):
+        return format_html(
+            '<span style="padding-left: {}px">{}</span>',
+            8 + getattr(self, 'mptt_level_indent', 10) * obj.level,
+            obj.slug,
+        )
 
     def baton_cl_rows_attributes(self, request, cl):
         data = {}
