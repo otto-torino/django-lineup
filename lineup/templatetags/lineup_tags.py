@@ -51,6 +51,19 @@ def set_active_voice(path, items):
                 parent = parent.get("parent")
 
 
+def _remove_parent_references(item):
+    """Remove the temporary upward links used to compute active ancestors.
+
+    ``create_tree`` builds bidirectional links between parents and children so
+    ``set_active_voice`` can walk back to the root. Keeping those links in the
+    completed tree makes it recursive, which cache backends based on pickle can
+    store but JSON-based cache instrumentation cannot serialize.
+    """
+    item.pop("parent", None)
+    for child in item.get("children", []):
+        _remove_parent_references(child)
+
+
 def create_tree(context, root, parent=None):
     # get current user
     user = context.get("user")
@@ -115,6 +128,7 @@ def lineup_menu(context, item):
             if t.get(key, None) is None:
                 root = MenuItem.objects.prefetch_related("children", "permissions").annotate(permissions_count=Count("permissions")).get(slug=item)
                 tree = create_tree(context, root)
+                _remove_parent_references(tree)
                 items = tree.get("children", [])
                 slug = item
                 level = root.level

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "django-lineup"
-version = "1.0.3"
+version = "1.0.4"
 description = "Navigation system for Django sites"
 readme = { file = "README.rst", content-type = "text/x-rst" }
 license = "MIT"

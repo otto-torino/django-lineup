@@ -3,6 +3,12 @@
 History
 -------
 
+1.0.4 (2026-07-21)
+++++++++++++++++++
+
+* Remove temporary parent references before caching menu trees so cache
+  instrumentation can serialize them without circular-reference errors
+
 1.0.3 (2026-07-21)
 ++++++++++++++++++
 

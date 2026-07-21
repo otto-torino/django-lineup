@@ -8,6 +8,7 @@ Tests for `django-lineup` templatetags module.
 """
 
 import json
+from django.core.cache import cache
 from django.test import TestCase, RequestFactory
 from lineup.templatetags.lineup_tags import get_all_user_permissions_id_list, set_active_voice
 from django.contrib.auth.models import User, Group, Permission, AnonymousUser
@@ -246,6 +247,19 @@ class LineupTagsTest(TestCase):
         }))
         expected = '\n<ul id="lineup-main-menu" class="level-0"><li class="has-active has-children "><a>Tools</a><ul id="lineup-tools" class="level-1"><li class="has-active has-children "><a>DNS Tools</a><ul id="lineup-dns-tools" class="level-2"><li class="active "><a href="/dmarc-tools/" title="DMARC Rulez">DMARC DNS Tools</a></li></ul></li><li class=""><a>Password Generator</a></li></ul></li><li class=""><a>Perm Item</a></li></ul>\n'
         self.assertEqual(out, expected)
+
+    def test_lineup_cached_menu_has_no_circular_references(self):
+        request = self.factory.get('/dmarc-tools/')
+        request.user = self.superuser
+
+        lineup_menu({
+            'user': self.superuser,
+            'request': request,
+        }, 'main-menu')
+
+        cached_menu = cache.get('lineup')
+        self.assertIsNotNone(cached_menu)
+        json.dumps(cached_menu, default=str)
 
     def test_lineup_menu_tag_logged_in_wrong_perms_user(self):
         out = Template(
