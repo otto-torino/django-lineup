@@ -3,6 +3,11 @@
 History
 -------
 
+1.0.2 (2026-07-21)
+++++++++++++++++++
+
+* Document the simplified ``'lineup'`` entry for ``INSTALLED_APPS``
+
 1.0.1 (2026-07-21)
 ++++++++++++++++++
 

@@ -41,7 +41,7 @@ Add it to your `INSTALLED_APPS`:
 
     INSTALLED_APPS = (
         ...
-        'lineup.apps.LineupConfig',
+        'lineup',
         ...
     )
 

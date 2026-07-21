@@ -8,7 +8,7 @@ To use Django Lineup in a project, add it to your `INSTALLED_APPS`:
 
     INSTALLED_APPS = (
         ...
-        'lineup.apps.LineupConfig',
+        'lineup',
         ...
     )
 
