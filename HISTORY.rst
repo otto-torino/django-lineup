@@ -3,6 +3,11 @@
 History
 -------
 
+1.0.3 (2026-07-21)
+++++++++++++++++++
+
+* Restrict menu tree rebuilding to authenticated staff using CSRF-protected POST requests
+
 1.0.2 (2026-07-21)
 ++++++++++++++++++
 

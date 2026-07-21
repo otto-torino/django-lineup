@@ -8,6 +8,11 @@
 {% endblock %}
 
 {% block object-tools-items %}
-    <li><a href="{% url 'lineup:rebuild' %}" class="rebuildlink">{% trans "Rebuild" %}</a></li>
+    <li>
+        <form action="{% url 'lineup:rebuild' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="rebuildlink">{% trans "Rebuild" %}</button>
+        </form>
+    </li>
     {{ block.super }}
 {% endblock %}
