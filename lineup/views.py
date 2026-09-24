@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.views.generic import View
 
+from . import cache
 from .models import MenuItem
 
 
@@ -11,4 +12,6 @@ from .models import MenuItem
 class RebuildTreeView(View):
     def post(self, request):
         MenuItem.objects.rebuild()
+        # rebuild() uses bulk_update, which does not send post_save signals
+        cache.clear()
         return redirect(reverse("admin:lineup_menuitem_changelist"))

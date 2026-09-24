@@ -10,10 +10,10 @@ from django.utils.safestring import mark_safe
 from django.db import transaction
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
-from django.core.cache import cache
 
 from mptt.models import MPTTModel, TreeForeignKey
 
+from . import cache
 from .managers import MenuItemManager
 from .exceptions import InvalidJson, UnsupportedJsonData, MissingJsonRequiredProp
 
@@ -135,5 +135,5 @@ class MenuItem(MPTTModel):
 
 @receiver(post_save, sender=MenuItem)
 @receiver(post_delete, sender=MenuItem)
-def clear_lineup_cache(sender , **kwargs):
-    cache.delete("lineup")
+def clear_lineup_cache(sender, **kwargs):
+    cache.clear()

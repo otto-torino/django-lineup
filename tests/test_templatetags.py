@@ -8,7 +8,9 @@ Tests for `django-lineup` templatetags module.
 """
 
 import json
-from django.core.cache import cache
+from unittest.mock import patch
+from django.test import override_settings
+from lineup import cache
 from django.test import TestCase, RequestFactory
 from lineup.templatetags.lineup_tags import get_all_user_permissions_id_list, set_active_voice
 from django.contrib.auth.models import User, Group, Permission, AnonymousUser
@@ -257,9 +259,41 @@ class LineupTagsTest(TestCase):
             'request': request,
         }, 'main-menu')
 
-        cached_menu = cache.get('lineup')
+        cached_menu = cache.get_menu('main-menu', self.superuser.id, '/dmarc-tools/')
         self.assertIsNotNone(cached_menu)
         json.dumps(cached_menu, default=str)
+
+    def test_lineup_menu_is_cached_per_menu_user_and_path(self):
+        context = {'user': self.superuser}
+        lineup_menu(context, 'main-menu')
+
+        self.assertIsNotNone(cache.get_menu('main-menu', self.superuser.id, ''))
+        self.assertIsNone(cache.get_menu('main-menu', self.superuser.id, '/other/'))
+
+    def test_lineup_cache_clear_invalidates_every_menu(self):
+        lineup_menu({'user': self.superuser}, 'main-menu')
+        cache.clear()
+
+        self.assertIsNone(cache.get_menu('main-menu', self.superuser.id, ''))
+
+    def test_lineup_menu_reflects_order_change(self):
+        lineup_menu({'user': self.superuser}, 'main-menu')
+        items = lineup_menu({'user': self.superuser}, 'main-menu')['items']
+        labels = [i['instance'].label for i in items]
+
+        last = MenuItem.objects.get(label=labels[-1])
+        last.order = -1
+        last.save()
+
+        items = lineup_menu({'user': self.superuser}, 'main-menu')['items']
+        self.assertEqual(items[0]['instance'].label, labels[-1])
+
+    @override_settings(LINEUP_CACHE_TIMEOUT=30)
+    def test_lineup_cache_uses_timeout_setting(self):
+        with patch('lineup.cache.cache.set') as cache_set:
+            cache.set_menu('main-menu', 1, '/', ([], 'main-menu', 0))
+
+        self.assertEqual(cache_set.call_args.args[2], 30)
 
     def test_lineup_menu_tag_logged_in_wrong_perms_user(self):
         out = Template(

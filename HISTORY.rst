@@ -3,6 +3,15 @@
 History
 -------
 
+Unreleased
+++++++++++
+
+* Invalidate cached menus after rebuilding the tree from the admin, so order
+  changes are visible in the frontend
+* Cache every menu, user and path under its own key instead of a single shared
+  dictionary, avoiding stale menus restored by concurrent requests
+* Add the ``LINEUP_CACHE_TIMEOUT`` setting (default ``600`` seconds)
+
 1.0.4 (2026-07-21)
 ++++++++++++++++++
 

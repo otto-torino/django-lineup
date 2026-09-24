@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import logging
-from django.core.cache import cache
 
 from django import template
 from django.contrib.auth.models import Permission
 from django.db.models import Q, Count
 from django.urls import LocalePrefixPattern
 from django.utils.translation import get_language
+from .. import cache
 from ..models import MenuItem
 
 register = template.Library()
@@ -123,19 +123,17 @@ def lineup_menu(context, item):
             user = context.get("user")
             if "request" in context:
                 path = context["request"].META["PATH_INFO"]
-            t = cache.get_or_set("lineup", {}, None)
-            key = "%s:%s:%s" % (item, user.id, path)
-            if t.get(key, None) is None:
+            cached = cache.get_menu(item, user.id, path)
+            if cached is None:
                 root = MenuItem.objects.prefetch_related("children", "permissions").annotate(permissions_count=Count("permissions")).get(slug=item)
                 tree = create_tree(context, root)
                 _remove_parent_references(tree)
                 items = tree.get("children", [])
                 slug = item
                 level = root.level
-                t[key] = (items, slug, level)
-                cache.set("lineup", t, None)
+                cache.set_menu(item, user.id, path, (items, slug, level))
             else:
-                (items, slug, level) = t[key]
+                (items, slug, level) = cached
         except MenuItem.DoesNotExist:
             logger.error("Provided lineup menu slug %s not found" % item)
             return context

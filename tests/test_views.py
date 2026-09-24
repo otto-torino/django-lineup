@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 
+from lineup import cache
 from lineup.models import MenuItem
 
 
@@ -65,6 +66,18 @@ class RebuildTreeViewTest(TestCase):
             fetch_redirect_response=False,
         )
         rebuild.assert_called_once_with()
+
+    def test_rebuild_clears_menu_cache(self):
+        user = get_user_model().objects.create_user(
+            username="staff", password="password", is_staff=True
+        )
+        self.client.force_login(user)
+        cache.set_menu("main", user.id, "/", ([], "main", 0))
+
+        with patch.object(MenuItem.objects, "rebuild"):
+            self.client.post(self.url)
+
+        self.assertIsNone(cache.get_menu("main", user.id, "/"))
 
     def test_staff_post_requires_csrf_token(self):
         user = get_user_model().objects.create_user(
