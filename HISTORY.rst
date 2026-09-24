@@ -3,8 +3,8 @@
 History
 -------
 
-Unreleased
-++++++++++
+1.1.0 (2026-09-24)
+++++++++++++++++++
 
 * Invalidate cached menus after rebuilding the tree from the admin, so order
   changes are visible in the frontend
