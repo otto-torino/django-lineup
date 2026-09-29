@@ -3,8 +3,8 @@
 History
 -------
 
-Unreleased
-++++++++++
+1.1.1 (2026-09-29)
+++++++++++++++++++
 
 * Render the admin Rebuild tool as a link again, so that the admin themes
   (django-baton included) style it like the other object tools; a small script
