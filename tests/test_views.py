@@ -39,7 +39,7 @@ class RebuildTreeViewTest(TestCase):
         self.assertIn(reverse("admin:login"), response.url)
         rebuild.assert_not_called()
 
-    def test_staff_user_cannot_rebuild_tree_with_get(self):
+    def test_staff_user_is_asked_to_confirm_with_get(self):
         user = get_user_model().objects.create_user(
             username="staff", password="password", is_staff=True
         )
@@ -48,7 +48,10 @@ class RebuildTreeViewTest(TestCase):
         with patch.object(MenuItem.objects, "rebuild") as rebuild:
             response = self.client.get(self.url)
 
-        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "admin/lineup/menuitem/rebuild_confirmation.html")
+        self.assertContains(response, f'<form action="{self.url}" method="post">')
+        self.assertContains(response, "csrfmiddlewaretoken")
         rebuild.assert_not_called()
 
     def test_staff_user_can_rebuild_tree_with_post(self):

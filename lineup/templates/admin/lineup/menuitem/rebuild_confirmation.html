@@ -1,0 +1,20 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% comment %}
+    The markup of the admin delete confirmation, which the admin themes style:
+    the body class for Django's own CSS, the wrapper for django-baton.
+{% endcomment %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} delete-confirmation{% endblock %}
+
+{% block content %}
+<div class="delete-confirmation-content">
+    <form action="{% url 'lineup:rebuild' %}" method="post">
+        {% csrf_token %}
+        <div>
+            <input type="submit" value="{% translate 'Rebuild' %}">
+            <a href="{% url 'admin:lineup_menuitem_changelist' %}" class="button cancel-link">{% translate "No, take me back" %}</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

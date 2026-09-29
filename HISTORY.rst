@@ -3,6 +3,15 @@
 History
 -------
 
+Unreleased
+++++++++++
+
+* Render the admin Rebuild tool as a link again, so that the admin themes
+  (django-baton included) style it like the other object tools; a small script
+  sends the CSRF-protected POST form when it is clicked
+* Without JavaScript, the Rebuild link opens a confirmation page with the POST
+  form instead of answering 405
+
 1.1.0 (2026-09-24)
 ++++++++++++++++++
 

@@ -1,5 +1,10 @@
 {% extends "admin/change_list.html" %}
-{% load admin_list i18n %}
+{% load admin_list i18n static %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script src="{% static 'lineup/js/rebuild.js' %}" defer></script>
+{% endblock %}
 
 {% block result_list %}
     {% if action_form and actions_on_top and cl.show_admin_actions %}{% admin_actions %}{% endif %}
@@ -9,9 +14,14 @@
 
 {% block object-tools-items %}
     <li>
-        <form action="{% url 'lineup:rebuild' %}" method="post">
+        {% comment %}
+            A link, so that every admin theme styles it like the other tools.
+            The script sends the POST form; without it the link opens a
+            confirmation page with the same form.
+        {% endcomment %}
+        <a href="{% url 'lineup:rebuild' %}" class="rebuildlink" data-lineup-rebuild-form="lineup-rebuild-form">{% translate "Rebuild" %}</a>
+        <form id="lineup-rebuild-form" action="{% url 'lineup:rebuild' %}" method="post" hidden>
             {% csrf_token %}
-            <button type="submit" class="rebuildlink">{% trans "Rebuild" %}</button>
         </form>
     </li>
     {{ block.super }}
